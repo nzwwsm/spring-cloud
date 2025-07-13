@@ -1,0 +1,8 @@
+[mysqld]
+server-id=1
+log-bin=mysql-bin
+binlog-do-db=business_db
+binlog-do-db=user_db
+binlog-do-db=order_db
+binlog-do-db=auth_db
+plugin-load-add=/usr/lib/mysql/plugin/authentication_mysql_native_password.so

@@ -1,0 +1,9 @@
+[mysqld]
+server-id=2
+relay-log=relay-log
+read-only=1
+log-bin=mysql-bin
+replicate-do-db=business_db
+replicate-do-db=user_db
+replicate-do-db=order_db
+replicate-do-db=auth_db

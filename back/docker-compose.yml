@@ -1,0 +1,80 @@
+version: '3.8'
+services:
+  nacos:
+    image: nacos/nacos-server:v2.3.2-slim
+    container_name: nacos
+    ports:
+      - "8848:8848"
+      - "9848:9848"
+      - "9849:9849"
+    environment:
+      - MODE=standalone
+      - NACOS_AUTH_TOKEN=YWRtaW46YWRtaW4=
+      - NACOS_AUTH_IDENTITY_KEY=serverIdentity
+      - NACOS_AUTH_IDENTITY=value
+      - NACOS_AUTH_IDENTITY_VALUE=server
+      - NACOS_AUTH_PLUGIN_JWT_SECRET_KEY=MTIzNDU2Nzg5MGFiY2RlZjEyMzQ1Njc4OTBhYmNkZWY=
+    volumes:
+      - nacos-data:/home/nacos/data
+    restart: always
+
+  mysql-master:
+    image: mysql:8.0-debian
+    container_name: mysql-master
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: main_db
+      TZ: Asia/Shanghai
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./master.cnf:/etc/mysql/conf.d/master.cnf
+      - mysql-master-data:/var/lib/mysql
+    restart: always
+
+  mysql-slave:
+    image: mysql:8.0-debian
+    container_name: mysql-slave
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: main_db
+      TZ: Asia/Shanghai
+    ports:
+      - "3307:3306"
+    volumes:
+      - ./slave.cnf:/etc/mysql/conf.d/slave.cnf
+      - mysql-slave-data:/var/lib/mysql
+    restart: always
+
+  sentinel:
+    image: bladex/sentinel-dashboard:latest
+    container_name: sentinel
+    ports:
+      - "8080:8080"
+    restart: always
+
+  redis:
+    image: redis:7
+    container_name: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    restart: always
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx-demo
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./dist:/usr/share/nginx/html
+    restart: always
+
+volumes:
+  nacos-data:
+  mysql-master-data:
+  mysql-slave-data:
+  redis-data:
+ 
